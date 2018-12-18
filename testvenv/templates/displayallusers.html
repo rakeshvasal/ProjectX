@@ -1,0 +1,31 @@
+{% extends 'header.html' %}
+
+{% block body %}
+	<H1>Dashboard</H1><h4>Welcome {{session.username}}</h4>
+	<a class="btn btn-success" href="/add_user_page">Add Article</a>
+	<hr>
+	<table class="table table-stripped">
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Username</th>
+			<th></th>
+			<th></th>
+		</tr>
+		{% for user in users %}
+		<tr>
+			<td>{{user.id}}</td>
+			<td>{{user.name}}</td>
+			<td>{{user.username}}</td>
+			<td>{{user.RollNo}}</td>
+			<td><a href="edit_user/{{user.id}}" class ="btn btn-default pull-right">Edit</td>
+			<td>
+				<form action="{{url_for('delete_user', id=user.id)}}" method="POST">
+					<input type="hidden" name="_method" value="DELETE">
+					<input type="submit" value="Delete" class="btn btn-danger">
+				</form>
+			</td>
+		</tr>
+		{% endfor%}
+	</table>
+{% endblock %}
