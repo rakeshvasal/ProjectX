@@ -3,7 +3,6 @@ import json
 from firebase import firebase
 import firebase_admin
 from firebase_admin import credentials
-from firebase_admin import firestore
 import pymongo
 from Forms import Add_user_form
 
@@ -12,13 +11,13 @@ app = Flask(__name__)
 firebase = firebase.FirebaseApplication('https://myapplication-8f68b.firebaseio.com/', None)
 
 # initialize firebase_admin
-cred = credentials.Certificate('D:\Rakesh\Data\PROJECT\myapplication-8f68b-4fe5e0c2c8a0.json')
-firebase_admin.initialize_app(cred)
+##cred = credentials.Certificate('D:\Rakesh\Data\PROJECT\myapplication-8f68b-4fe5e0c2c8a0.json')
+##firebase_admin.initialize_app(cred)
 # initialize mongodb
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["localdb"]
 
-db = firestore.client()
+##db = firestore.client()
 
 @app.route('/')
 def index():
@@ -67,10 +66,13 @@ def add_user():
     form = Add_user_form(request.form)
     if request.method == 'POST':
         data = request.data
+        print(data)
+        ##print(jsonify(data))
         dataDict = json.loads(data)
         print(dataDict)
-
-        return (jsonify(dataDict))
+        ##u_id = firebase.push()
+        result = firebase.post("/users", dataDict)
+        return (json.dumps(result))
 
     return redirect(url_for('index'))
 
