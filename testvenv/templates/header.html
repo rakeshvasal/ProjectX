@@ -2,45 +2,6 @@
 	<HEAD>
 		<TITLE>Flask APP</TITLE>
 		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-		<script type="text/javascript">
-		function myfunction(){
-      var fullname = document.getElementById("u_name").value;
-      var emailaddress = document.getElementById("u_email").value;
-      var password = document.getElementById("u_password").value;
-      var cpassword = document.getElementById("u_cpassword").value;
-      var jsonstring = { "firstName":fullname , "emailaddress":emailaddress, "password" : password};
-       	/*var xhttp = new XMLHttpRequest();
-    	xhttp.onreadystatechange = function() {
-         	if (this.readyState == 4 && this.status == 200) {
-             alert(this.responseText);
-         	}
-    	};
-    	xhttp.open("POST", "http://localhost:5000/add_user", true);
-    	xhttp.setRequestHeader("Content-type", "application/json");
-    	xhttp.setRequestHeader("crossDomain", true);
-    	xhttp.setRequestHeader("Access-Control-Allow-Origin", "http://localhost:5000");
-    	xhttp.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        xhttp.setRequestHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    	xhttp.send(JSON.stringify(jsonstring));
-		}
-*/
-		$.ajax({
-    		url: 'http://localhost:5000/add_user',
-    		type: 'POST',
-    		contentType: 'application/json',
-    		crossDomain:true,
-    		Access-Control-Allow-Origin:'http://localhost:5000'
-    		Access-Control-Allow-Headers:'Content-Type,Authorization'
-    		Access-Control-Allow-Methods:'GET,PUT,POST,DELETE,OPTIONS'
-    		data: JSON.stringify(jsonstring), 
-    		success: function(){
-       			alert('hello');
-    		},
-    		error: function(){
-        		alert('error');
-    		}
-		});
-	</script>
 	</HEAD>
 	<BODY>
 			{% include 'includes/navbar.html'%}
