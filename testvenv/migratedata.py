@@ -3,30 +3,38 @@ from flask import Flask,render_template
 from flask_pymongo import PyMongo
 from firebase import firebase
 import json
+import pymongo
+from pymongo import MongoClient
 
 app = Flask(__name__)
-
+##config for mlab connections
 app.config ['MONGO_DBNAME'] = 'localhost'
 app.config ['MONGO_URI'] = 'mongodb://rakeshvasaldbadmin:rakeshvasal02@ds259912.mlab.com:59912/oddesseydb'
 
+##config for mlab connections
 mongo = PyMongo(app)
+
+client = pymongo.MongoClient("mongodb+srv://rakeshvasal:pass123456@rakesh1-9x2sl.gcp.mongodb.net/test?retryWrites=true")
 
 firebase = firebase.FirebaseApplication('https://myapplication-8f68b.firebaseio.com/', None)
 
 @app.route('/')
 def index():
-	user = mongo.db.users
+	db = client['TestDB']
+	collection = db['FirstCollection']
+	print(collection.find_one())
+	##user = mongo.db.users
 	##user.insert({'name' : 'Rakesh'})
-	userlist = []
-	result = firebase.get('/users', None)
-	for x, y in result.items():
-		userdata = json.dumps(y)
-		lastindex = userdata.rindex('}')
-		userdata = userdata[:lastindex]
-		userdata = userdata + " ,\"id\" : \"" + x + "\"}"
-		data = json.loads(userdata)
-		string = json.dumps(data)
-		branch = data["branch"]
+	##userlist = []
+	##result = firebase.get('/users', None)
+	##for x, y in result.items():
+		##userdata = json.dumps(y)
+		##lastindex = userdata.rindex('}')
+		##userdata = userdata[:lastindex]
+		##userdata = userdata + " ,\"id\" : \"" + x + "\"}"
+		##data = json.loads(userdata)
+		##string = json.dumps(data)
+		##branch = data["branch"]
 		##post_id = user.insert_one(data).inserted_id
 		##print(post_id)
 
