@@ -1,37 +1,37 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session, logging, jsonify, make_response, current_app
+import flask
+from flask import Flask,render_template
 import json
-from firebase import firebase
-import firebase_admin
-from firebase_admin import credentials
 import pymongo
-from Forms import Add_user_form
+from pymongo import MongoClient
 
 
 app = Flask(__name__)
-
-firebase = firebase.FirebaseApplication('https://myapplication-8f68b.firebaseio.com/', None)
-
-# initialize firebase_admin
-##cred = credentials.Certificate('D:\Rakesh\Data\PROJECT\myapplication-8f68b-4fe5e0c2c8a0.json')
-##firebase_admin.initialize_app(cred)
-# initialize mongodb
+##client = pymongo.MongoClient("mongodb+srv://rakeshvasal:pass123456@rakesh1-9x2sl.gcp.mongodb.net/test?retryWrites=true")
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-mydb = myclient["localdb"]
 
-##db = firestore.client()
+db = myclient["mydatabase"]
+##db = client['TestDB']
+user_collection = db['users']
+event_collection = db['events']
+organisers_collection = db['organisers']
+location_collection = db['locations']
 
 @app.route('/')
 def index():
-    result = firebase.get('/users', None)
+    collection = db['FirstCollection']
+    print(collection.find_one())
+    collist = db.list_collection_names()
+    mydict = { "name": "John", "address": "Highway 37" }
+    x = collection.insert_one(mydict)
+    print(x)
+    if "FirstCollection" in collist:
+        print("The collection exists.")
     return render_template('home.html')
 
 ## GET REQUESTS
 @app.route('/api/v1/get_users', methods=['GET'])
 def get_all_users():
     userdata = ''
-    result = firebase.get('/users', None)
-    for x, y in result.items():
-        userdata = userdata + json.dumps(y)
     return jsonify(userdata)
 
 @app.route('/api/v1/get_events', methods = ['GET'])
@@ -58,15 +58,14 @@ def get_all_organisers():
         organisersdata = organisersdata + json.dumps(y)
         return jsonify(organisersdata)
 
-## POST REQUESTS
+################################### POST REQUESTS ##########################################
 @app.route('/api/v1/add_event', methods =['POST'])
 def add_event():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
-        result = firebase.post("/events", dataDict)
+        result = event_collection.insert_one(dataDict)
         return jsonify(result)
-
     return redirect(url_for('index'))
 
 @app.route('/api/v1/add_user', methods =['POST'])
@@ -74,9 +73,8 @@ def add_user():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
-        result = firebase.post("/users", dataDict)
+        result = user_collection.insert_one(dataDict)
         return jsonify(result)
-
     return redirect(url_for('index'))
 
 @app.route('/api/v1/add_location', methods =['POST'])
@@ -84,7 +82,7 @@ def add_location():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
-        result = firebase.post("/locations", dataDict)
+        result = location_collection.insert_one(dataDict)
         return jsonify(result)
     return render_template('home.html')
 
@@ -93,17 +91,17 @@ def add_committee_members():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
-        result = firebase.post("/event_users", dataDict)
+        result = organisers_collection.insert_one(dataDict)
         return jsonify(result)
     return render_template('home.html')
 
-## PUT REQUESTS
+###################################### PUT REQUESTS ##########################################
 @app.route('/api/v1/edit_event', methods =['PUT'])
-def add_event():
+def edit_event():
     return render_template('home.html')
 
 @app.route('/api/v1/edit_user', methods =['PUT'])
-def add_user():
+def edit_user():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
@@ -114,20 +112,20 @@ def add_user():
     return redirect(url_for('index'))
 
 @app.route('/api/v1/edit_location', methods =['PUT'])
-def add_location():
+def edit_location():
     return render_template('home.html')
 
 @app.route('/api/v1/edit_organisers', methods =['PUT'])
-def add_committee_members():
+def edit_committee_members():
     return render_template('home.html')
 
-## DELETE REQUESTS
+######################################## DELETE REQUESTS #######################################
 @app.route('/api/v1/delete_event', methods =['DELETE'])
-def add_event():
+def delete_event():
     return render_template('home.html')
 
 @app.route('/api/v1/delete_user', methods =['DELETE'])
-def add_user():
+def delete_user():
     if request.method == 'POST':
         data = request.data
         dataDict = json.loads(data)
@@ -138,17 +136,13 @@ def add_user():
     return redirect(url_for('index'))
 
 @app.route('/api/v1/delete_location', methods =['DELETE'])
-def add_location():
+def delete_location():
     return render_template('home.html')
 
 @app.route('/api/v1/delete_organisers', methods =['DELETE'])
-def add_committee_members():
+def delete_organisers():
     return render_template('home.html')
 
-@app.route('/add_user_page')
-def add_user_page():
-	form = Add_user_form(request.form)
-	return render_template('registration.html', form = form)
 
 if __name__ == '__main__':
     app.secret_key = 'secret123'
